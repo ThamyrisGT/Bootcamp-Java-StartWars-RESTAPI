@@ -21,40 +21,36 @@ public class JediService {
         this.jediRepositoryImpl = jediRepositoryImpl;
     }
 
-
-    public Optional<Jedi> findById(int id) {
-
+    public Optional<Jedi> findById(Integer id) {
         logger.info("Find Jedi with id: {}", id);
-
-        return  jediRepositoryImpl.findById(id);
+        return jediRepositoryImpl.findById(id);
     }
 
     public List<Jedi> findAll() {
-
-        logger.info("Bring all the Jedis from the Galaxy");
-
+        logger.info("Find all Jedis on Galaxy");
         return jediRepositoryImpl.findAll();
     }
 
     public Jedi save(Jedi jedi) {
         jedi.setVersion(1);
 
-        logger.info("Update Jedi from system");
-
+        logger.info("Save Jedi to the database: {}", jedi);
         return jediRepositoryImpl.save(jedi);
     }
 
     public boolean update(Jedi jedi) {
         boolean updated = false;
 
-        Jedi savedJedi = this.save(jedi);
+        logger.info("Update jedi to the database: {}", jedi);
 
-        if (savedJedi != null) updated = true;
+        Jedi savedProduct = this.save(jedi);
+
+        if(savedProduct != null) updated = true;
 
         return updated;
     }
 
-    public boolean delete(int id) {
+    public boolean delete(Integer id) {
         return true;
     }
 }

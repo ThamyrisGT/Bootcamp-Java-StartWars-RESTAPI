@@ -1,7 +1,6 @@
 package com.bootcampjava.starwars.repository;
 
 import com.bootcampjava.starwars.model.Jedi;
-import com.bootcampjava.starwars.service.JediService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -16,13 +15,14 @@ import java.util.Map;
 import java.util.Optional;
 
 @Repository
-public class JediRepositoryImpl implements JediRepository{
+public class JediRepositoryImpl implements JediRepository {
 
-    private static final Logger logger = LogManager.getLogger(JediService.class);
+    private static final Logger logger = LogManager.getLogger(JediRepositoryImpl.class);
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert simpleJdbcInsert;
 
+    // construtor para identificar o jdbc template
     public JediRepositoryImpl(JdbcTemplate jdbcTemplate, DataSource dataSource) {
         this.jdbcTemplate = jdbcTemplate;
 
@@ -30,7 +30,6 @@ public class JediRepositoryImpl implements JediRepository{
                 .withTableName("jedis")
                 .usingGeneratedKeyColumns("id");
     }
-
 
     @Override
     public Optional<Jedi> findById(Integer id) {
@@ -41,11 +40,10 @@ public class JediRepositoryImpl implements JediRepository{
                         Jedi p = new Jedi();
                         p.setId(rs.getInt("id"));
                         p.setName(rs.getString("name"));
-                        p.setStrength(rs.getInt("strength"));
+                        p.setStrength(rs.getInt("strenght"));
                         p.setVersion(rs.getInt("version"));
                         return p;
                     });
-
             return Optional.of(jedi);
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
@@ -59,33 +57,26 @@ public class JediRepositoryImpl implements JediRepository{
                     Jedi jedi = new Jedi();
                     jedi.setId(rs.getInt("id"));
                     jedi.setName(rs.getString("name"));
-                    jedi.setStrength(rs.getInt("strength"));
+                    jedi.setStrength(rs.getInt("strenght"));
                     jedi.setVersion(rs.getInt("version"));
                     return jedi;
                 });
     }
 
-    @Override
-    public boolean update(Jedi jedi) {
-        return jdbcTemplate.update("UPDATE jedis SET name = ?, strength = ?, version = ? WHERE id = ?",
-                jedi.getName(),
-                jedi.getStrength(),
-                jedi.getVersion(),
-                jedi.getId()) == 1;
-    }
 
     @Override
     public Jedi save(Jedi jedi) {
+
         Map<String, Object> parameters = new HashMap<>(1);
         parameters.put("name", jedi.getName());
-        parameters.put("strength", jedi.getStrength());
+        parameters.put("strenght", jedi.getStrength());
         parameters.put("version", jedi.getVersion());
 
         Number newId = simpleJdbcInsert.executeAndReturnKey(parameters);
 
-        logger.info("Inserting Jedi intro database, generated id is: {}", newId);
+        logger.info("Inserting jedi into database, generated key is: {}", newId);
 
-        jedi.setId((Integer) newId);
+        jedi.setId((Integer)newId);
 
         return jedi;
     }
@@ -93,5 +84,14 @@ public class JediRepositoryImpl implements JediRepository{
     @Override
     public boolean delete(Integer id) {
         return jdbcTemplate.update("DELETE FROM jedis WHERE id = ?", id) == 1;
+    }
+
+    @Override
+    public boolean update(Jedi jedi) {
+        return jdbcTemplate.update("UPDATE jedis SET name = ?, strenght = ?, version = ? WHERE id = ?",
+                jedi.getName(),
+                jedi.getStrength(),
+                jedi.getVersion(),
+                jedi.getId()) == 1;
     }
 }

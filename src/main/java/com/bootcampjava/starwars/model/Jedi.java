@@ -22,7 +22,7 @@ public class Jedi {
 
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -46,7 +46,7 @@ public class Jedi {
         this.strength = strength;
     }
 
-    public int getVersion() {
+    public Integer getVersion() {
         return version;
     }
 
